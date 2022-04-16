@@ -26,6 +26,7 @@
 		FA2A57BC2808D54C0081064D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA2A57BF2808D54C0081064D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA2A57C12808D54C0081064D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA3F606F280B1E9A001F588F /* istanbul.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = istanbul.gpx; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +67,7 @@
 				FA2A57BE2808D54C0081064D /* LaunchScreen.storyboard */,
 				FA2A57C12808D54C0081064D /* Info.plist */,
 				FA2A57B92808D5450081064D /* HaritaUygulamasi.xcdatamodeld */,
+				FA3F606F280B1E9A001F588F /* istanbul.gpx */,
 			);
 			path = HaritaUygulamasi;
 			sourceTree = "<group>";
