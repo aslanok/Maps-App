@@ -17,25 +17,43 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="orM-67-2JP">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <rect key="frame" x="0.0" y="201" width="414" height="661"/>
                             </mapView>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="İsim Giriniz" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="EWk-ke-zAt">
+                                <rect key="frame" x="49" y="79" width="316" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Notunuzu Giriniz" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hRl-Dn-Hpp">
+                                <rect key="frame" x="49" y="131" width="316" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="orM-67-2JP" secondAttribute="trailing" id="0xi-S1-Vlu"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="orM-67-2JP" secondAttribute="bottom" id="29l-9x-9HP"/>
-                            <constraint firstItem="orM-67-2JP" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="3R6-kz-Na8"/>
-                            <constraint firstItem="orM-67-2JP" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="kxR-wE-QrL"/>
+                            <constraint firstItem="EWk-ke-zAt" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Vno-tM-KmF"/>
+                            <constraint firstItem="orM-67-2JP" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="YCc-lV-Td1"/>
+                            <constraint firstItem="EWk-ke-zAt" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="35" id="Yfw-Sz-3x7"/>
+                            <constraint firstItem="EWk-ke-zAt" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="49" id="fJ3-fr-vHK"/>
+                            <constraint firstItem="EWk-ke-zAt" firstAttribute="leading" secondItem="hRl-Dn-Hpp" secondAttribute="leading" id="lF7-0i-WlN"/>
+                            <constraint firstItem="hRl-Dn-Hpp" firstAttribute="centerX" secondItem="orM-67-2JP" secondAttribute="centerX" id="nzS-Nm-Fgq"/>
+                            <constraint firstItem="hRl-Dn-Hpp" firstAttribute="top" secondItem="EWk-ke-zAt" secondAttribute="bottom" constant="18" id="oPs-4O-Dvz"/>
+                            <constraint firstItem="orM-67-2JP" firstAttribute="top" secondItem="hRl-Dn-Hpp" secondAttribute="bottom" constant="36" id="oQO-wA-20y"/>
+                            <constraint firstItem="orM-67-2JP" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="pXg-Pl-LII"/>
+                            <constraint firstItem="EWk-ke-zAt" firstAttribute="trailing" secondItem="hRl-Dn-Hpp" secondAttribute="trailing" id="tEL-aA-oQV"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="isimTextField" destination="EWk-ke-zAt" id="XA1-2n-6v1"/>
                         <outlet property="mapView" destination="orM-67-2JP" id="ulI-KS-SGG"/>
+                        <outlet property="notTextField" destination="hRl-Dn-Hpp" id="JqS-d9-yaC"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="35" y="81"/>
+            <point key="canvasLocation" x="34.782608695652179" y="80.357142857142847"/>
         </scene>
     </scenes>
     <resources>

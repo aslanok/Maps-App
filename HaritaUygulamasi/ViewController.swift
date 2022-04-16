@@ -10,8 +10,12 @@ import MapKit
 import CoreLocation
 
 class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
+    
+    @IBOutlet weak var isimTextField: UITextField!
+    @IBOutlet weak var notTextField: UITextField!
     var locationManager = CLLocationManager() //burda locationManager objesi yaratıldı
     @IBOutlet weak var mapView: MKMapView!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,8 +40,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             let dokunulanKoordinat = mapView.convert(dokunulanNokta, toCoordinateFrom: mapView) //coordinateView'dan çekilecek ve bu da bizim mapView'imiz
             let annotation = MKPointAnnotation()
             annotation.coordinate = dokunulanKoordinat //burda annotation gösterilecek dedik
-            annotation.title = "kullanici seçimi"
-            annotation.subtitle = "örnek altyazi"
+            annotation.title = isimTextField.text ?? "kullanici seçimi"
+            annotation.subtitle = notTextField.text ?? "kullanici notu"
             mapView.addAnnotation(annotation)
             
         }
