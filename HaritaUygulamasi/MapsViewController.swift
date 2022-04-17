@@ -8,13 +8,20 @@
 import UIKit
 import MapKit
 import CoreLocation
+import CoreData
 
-class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
+class MapsViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
     
     @IBOutlet weak var isimTextField: UITextField!
     @IBOutlet weak var notTextField: UITextField!
-    var locationManager = CLLocationManager() //burda locationManager objesi yaratıldı
     @IBOutlet weak var mapView: MKMapView!
+    
+    var locationManager = CLLocationManager() //burda locationManager objesi yaratıldı
+    var secilenLatitude = Double()
+    var secilenLongitude = Double()
+    
+    var secilenIsim : String = ""
+    var secilenId : UUID?
     
     
     override func viewDidLoad() {
@@ -32,12 +39,28 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         gestureRecognizer.minimumPressDuration = 3
         mapView.addGestureRecognizer(gestureRecognizer)
         
+        if secilenIsim != "" {
+            //coreData'dan verileri çek
+            if let uuidString = secilenId?.uuidString {
+                print(uuidString) //secilenİsmin uuid String verisini aldık
+            }
+            
+        } else {
+            //yeni veri eklenecektir
+            
+        }
+        
     }
     //burda dokunduğumuz yerin ne olduğunu dışardan aldık
     @objc func konumSec(gestureRecognizer : UIGestureRecognizer){
         if gestureRecognizer.state == .began { //gesture'ın durumuna baktık
             let dokunulanNokta = gestureRecognizer.location(in: mapView) //mapview'e dokunuyoruz
             let dokunulanKoordinat = mapView.convert(dokunulanNokta, toCoordinateFrom: mapView) //coordinateView'dan çekilecek ve bu da bizim mapView'imiz
+            
+            //dokunulan noktadaki enlem ve boylamı aldık
+            secilenLatitude = dokunulanKoordinat.latitude
+            secilenLongitude = dokunulanKoordinat.longitude
+            
             let annotation = MKPointAnnotation()
             annotation.coordinate = dokunulanKoordinat //burda annotation gösterilecek dedik
             annotation.title = isimTextField.text ?? "kullanici seçimi"
@@ -60,7 +83,26 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         let region = MKCoordinateRegion(center: location, span: span)
         mapView.setRegion(region, animated: true) //map'te gezinirken istenilen konuma doğru gitmeyi sağlayan kod satırı budur.Bunda region istiyor ve biz de region yarattık.
     }
-
+    
+    
+    @IBAction func kaydetTapped(_ sender: UIButton) {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let yeniYer = NSEntityDescription.insertNewObject(forEntityName: "Yer", into: context)
+        yeniYer.setValue(isimTextField.text, forKey: "isim")
+        yeniYer.setValue(notTextField.text, forKey: "not")
+        yeniYer.setValue(secilenLatitude, forKey: "latitude")
+        yeniYer.setValue(secilenLongitude, forKey: "longitude")
+        yeniYer.setValue(UUID(), forKey: "id")
+        
+        do {
+            try context.save()
+            print("kayit edildi")
+        } catch {
+            print("Hata var ")
+        }
+    }
 
 }
 
