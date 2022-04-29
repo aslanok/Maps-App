@@ -23,6 +23,10 @@ class MapsViewController: UIViewController, MKMapViewDelegate, CLLocationManager
     var secilenIsim : String = ""
     var secilenId : UUID?
     
+    var annotationTitle = ""
+    var annotationSubtitle = ""
+    var annotationLatitude = Double()
+    var annotationLongitude = Double()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +47,48 @@ class MapsViewController: UIViewController, MKMapViewDelegate, CLLocationManager
             //coreData'dan verileri çek
             if let uuidString = secilenId?.uuidString {
                 print(uuidString) //secilenİsmin uuid String verisini aldık
+                let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                let context = appDelegate.persistentContainer.viewContext
+                
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Yer")
+                fetchRequest.predicate = NSPredicate(format: "id  = %@",uuidString) //filtreleme işlemi yapıyoruz burda. id'si uuidString'e eşit olanları getir diyoruz bu satırlarda
+                fetchRequest.returnsObjectsAsFaults = false
+                
+                do {
+                    let sonuclar = try context.fetch(fetchRequest) //burda bize bi dizi dönüyor
+                    if sonuclar.count > 0 {
+                        for sonuc in sonuclar as! [NSManagedObject] {
+                            if let  isim = sonuc.value(forKey: "isim") as? String {
+                                annotationTitle = isim
+                            }
+                            if let not = sonuc.value(forKey: "not") as? String {
+                                annotationSubtitle = not
+                            }
+                            if let latitude = sonuc.value(forKey: "latitude") as? Double {
+                                annotationLatitude = latitude
+                            }
+                            if let longitude = sonuc.value(forKey: "longitude") as? Double {
+                                annotationLongitude = longitude
+                            }
+                            let annotation = MKPointAnnotation()
+                            annotation.title = annotationTitle
+                            annotation.subtitle = annotationSubtitle
+                            let coordinate = CLLocationCoordinate2D(latitude: annotationLatitude, longitude: annotationLongitude)
+                            annotation.coordinate = coordinate
+                            mapView.addAnnotation(annotation)
+                            isimTextField.text = annotationTitle
+                            notTextField.text = annotationSubtitle
+                            //tableView'daki konuma bakarken bulunduğmuz konuma göre yapılan güncellemeyi yapmayı bırak diyorum
+                            locationManager.stopUpdatingLocation()
+                            let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                            let region = MKCoordinateRegion(center: coordinate, span: span)
+                            mapView.setRegion(region, animated: true)
+                        }
+                    }
+                } catch {
+                    print("Hata")
+                }
+                
             }
             
         } else {
@@ -51,6 +97,33 @@ class MapsViewController: UIViewController, MKMapViewDelegate, CLLocationManager
         }
         
     }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if annotation is MKUserLocation { //eğer ki annotasyon kullanıcının kendi konumunu gösteriyorsa bişey yapmayacağız
+            return nil
+        }
+        //tekrar kullanılabilir bi annotation oluşturduk
+        let reuseId = "benimAnnotation"
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId)
+        
+        if pinView == nil {
+            //baştan oluşturucaz
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            pinView?.canShowCallout = true
+            pinView?.tintColor = .blue
+            
+            let button = UIButton(type: UIButton.ButtonType.detailDisclosure) //bu buttonu kullanarak kullanıcının şu an bulunduğu konumdan tableView'dan tıkladığı konuma gitmesini sağlayacağız
+            pinView?.rightCalloutAccessoryView = button
+            
+        } else {
+            pinView?.annotation = annotation
+        }
+        return pinView
+        
+        
+    }
+    
+    
     //burda dokunduğumuz yerin ne olduğunu dışardan aldık
     @objc func konumSec(gestureRecognizer : UIGestureRecognizer){
         if gestureRecognizer.state == .began { //gesture'ın durumuna baktık
@@ -76,12 +149,16 @@ class MapsViewController: UIViewController, MKMapViewDelegate, CLLocationManager
         //print(locations[0].coordinate.latitude)
         //print(locations[0].coordinate.longitude)
         //location değişkeni sayesinde bir yer değişkeni tanımladık
-        let location = CLLocationCoordinate2D(latitude: locations[0].coordinate.latitude, longitude: locations[0].coordinate.longitude)
         
-        //region yaratırken de bizden span istiyor. alt satırda span yarattık
-        let span = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1) //0.1 0.1 burda yakın bir zoom sağlıyor fakat 0.5 mesela uzak bir görüntü verecektir
-        let region = MKCoordinateRegion(center: location, span: span)
-        mapView.setRegion(region, animated: true) //map'te gezinirken istenilen konuma doğru gitmeyi sağlayan kod satırı budur.Bunda region istiyor ve biz de region yarattık.
+        //secilen isim boşsa alttaki satırlara giriyor çünkü eğer ki secilenisim boş olmazsa kullancı önceden kaydetmiş olduğu bi konuma gitmek isteyecektir
+        if secilenIsim == ""{
+            let location = CLLocationCoordinate2D(latitude: locations[0].coordinate.latitude, longitude: locations[0].coordinate.longitude)
+            //region yaratırken de bizden span istiyor. alt satırda span yarattık
+            let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05) //0.1 0.1 burda yakın bir zoom sağlıyor fakat 0.5 mesela uzak bir görüntü verecektir
+            let region = MKCoordinateRegion(center: location, span: span)
+            mapView.setRegion(region, animated: true) //map'te gezinirken istenilen konuma doğru gitmeyi sağlayan kod satırı budur.Bunda region istiyor ve biz de region yarattık.
+
+        }
     }
     
     
@@ -102,6 +179,9 @@ class MapsViewController: UIViewController, MKMapViewDelegate, CLLocationManager
         } catch {
             print("Hata var ")
         }
+        //notificationCenter'ı direkt kaydet'e bastıktan sonra tableView'e dönmek için oluşturduk
+        NotificationCenter.default.post(name: NSNotification.Name("yeniYerOlusturuldu"), object: nil) //notificationcenterda böyle bir veri yolladık.
+        navigationController?.popViewController(animated: true) //bir önceki viewController'a gitmemizi sağlıyor
     }
 
 }

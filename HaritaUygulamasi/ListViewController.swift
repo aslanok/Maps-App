@@ -28,7 +28,11 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
-    func veriAl(){
+    override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(veriAl), name: NSNotification.Name("yeniYerOlusturuldu"), object: nil) //eğerki bizim observer'ımız mesajı gözlemlerse @objc metodu çalıştırılacaktır. Yani yeni yer oluşturulunca veriAl fonksiyonu çalıştırıldı
+    }
+     
+    @objc func veriAl(){
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Yer")
