@@ -109,7 +109,7 @@ class MapsViewController: UIViewController, MKMapViewDelegate, CLLocationManager
         if pinView == nil {
             //baştan oluşturucaz
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView?.canShowCallout = true
+            pinView?.canShowCallout = true //callout gösterilebilirmi'ye evet dediğimiz için gidip aşağıda da bu butona tıklanınca ne olacağını seçeceğiz
             pinView?.tintColor = .blue
             
             let button = UIButton(type: UIButton.ButtonType.detailDisclosure) //bu buttonu kullanarak kullanıcının şu an bulunduğu konumdan tableView'dan tıkladığı konuma gitmesini sağlayacağız
@@ -119,10 +119,24 @@ class MapsViewController: UIViewController, MKMapViewDelegate, CLLocationManager
             pinView?.annotation = annotation
         }
         return pinView
-        
-        
     }
     
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if secilenIsim != "" {
+            let requestLocation = CLLocation(latitude: annotationLatitude, longitude: annotationLongitude)
+            CLGeocoder().reverseGeocodeLocation(requestLocation) { placemarkDizisi, hata in
+                if let placemarks = placemarkDizisi { //placemark boş mu diye checkledik
+                    if placemarks.count > 0 { //placemark içinde herhangi bi obje var mı diye checkledik
+                        let yeniPlaceMark = MKPlacemark(placemark: placemarks[0])
+                        let item = MKMapItem(placemark: yeniPlaceMark)
+                        item.name = self.annotationTitle
+                        let launchOptions = [MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving]
+                        item.openInMaps(launchOptions: launchOptions)
+                    }
+                }
+            }
+        }
+    }
     
     //burda dokunduğumuz yerin ne olduğunu dışardan aldık
     @objc func konumSec(gestureRecognizer : UIGestureRecognizer){
